@@ -1,0 +1,116 @@
+CMSC421 Project 3
+
+[ README ]
+
+Project Overview
+=====================
+Explore how filesystems are designed in both userspace and kernel space 
+using modules. Develop a multimedia embedded memory encapsulation filesystem 
+(memefs). The userspace filesystem will be designed using the FUSE framework,
+while the Kernel code will be implemented using a loadable kernel module.
+Both drivers will be able to retrieve files, list directory contents, 
+open a file, and read data from a file.
+
+
+For info about Part 3, please see the README in the kernelSpace directory.
+
+We made an accidental push to the userSpace folder during Part 3 and then
+cleaned it up. Please use the commit within the submission window at the hash:
+  b62666a21be7b6ecccd818215aa57a759f7faddf
+Titled:
+  "Last commit? Renamed all_test.sh to all_tests.sh."
+(For grading Parts 1 & 2)
+
+Contact:
+Evan Bartkowski e168@umbc.edu
+Benjamin Whitehurst b236@umbc.edu
+
+
+Installation and Setup
+======================
+cd /usr/src/project3/userSpace
+apt-get update
+apt-get install fuse libfuse2 libfuse-dev
+
+# this compiles the program 
+make
+# this runs ./mkmemefs to generate an image file 'filesystem.img' (default)
+make image
+# this runs ./memefs with a volume_label, mountdir, and image file
+make mount
+
+# you can now enter your filesystem!
+cd mountpoint
+# use commands to view everything in mountpoint
+ls
+# use command to make a new file
+touch <filename>
+# use command to edit the file
+echo "whatever message you want" > <filename>
+
+#you can also do the commands from outside the directory
+ls mountpoint
+touch mountpoint/<filename>
+echo "message" > mountpoint/<filename>
+ 
+# when you are done use this command to unmount your mountpoint
+make umount 
+# other methods to unmount
+umount <mountpoint name>
+
+# to clean up the extra clutter
+make clean
+
+# other various commands
+./mkmemefs <image name>
+#manually creating it
+./memefs <mountpoint> <image>
+
+# names for the image, mountdir, and label are editable in Makefile
+
+
+
+Testing Strategy
+======================
+
+- To run automatic tests:
+cd userSpace/tests
+bash all_tests
+
+- Debug modes:
+# runs program with -f flag, displaying debug messages in the current shell
+# you will have to open another shell to access mountpoint
+make debug
+# runs program with valgrind (shows as "still reachable" until you unmount)
+make valgrind
+
+- Custom testing
+img_funcs.h & img_funcs.c are standalone, meaning they can be compiled together
+with a separate main function, without the rest of the project. This allows us
+to test the filesystem image reading & writing capabilities directly without
+worrying about anything from FUSE. A diagram of img_funcs can be found here:
+https://media.discordapp.net/attachments/1304141573206052897/1311590430177103954/image_loader.png?ex=67496946&is=674817c6&hm=fc09abbe5cbc92b438d8a3d4976d4cfc352fd0b476b5e0c2c6f109f4b8007ddf&=&format=webp&quality=lossless&width=1278&height=954
+
+Troubleshooting
+======================
+Getting the image to generate. We also had issues with working around permissions with mountpoints and deleting 
+mountpoints. We used some force commands to run some things such as removing directorys with -r or force merging.
+We fixed the issue with mountpoints by creating the mountpoint beforehand, having it empty, and creating the image and
+code after.
+
+References
+======================
+
+"Writing a Simple Filesystem Using FUSE in C"
+https://maastaar.net/fuse/linux/filesystem/c/2016/05/21/writing-a-simple-filesystem-using-fuse/
+
+"Git Branching - Basic Branching and Merging"
+https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging
+
+"Develop your own filesystem with FUSE"
+https://developer.ibm.com/articles/l-fuse/
+
+"Common Type Attributes" (for structs)
+https://gcc.gnu.org/onlinedocs/gcc-7.1.0/gcc/Common-Type-Attributes.html
+
+As well the project document and the sources linked within it.

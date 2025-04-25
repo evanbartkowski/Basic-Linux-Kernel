@@ -1,0 +1,25 @@
+Name: Evan Bartkowski
+Student ID: GB70971
+Email: e168@umbc.edu
+
+Project: Project 2 (producer and consumer problem with priority dequeues)
+
+Project Overview: This project uses three different priority dequeues (double ended queues) to handle programs. The priority levels are Low, medium, and High. Programs will be moved to a queue simulating a priority based scheduling system where producers will add tasks to the deques (using synchronization) and consumers will remove them based on highest available priority.
+
+Project Structure: 
+#USERSPACE#
+deque.h: Header that creates definitions and function prototypes
+deque.c: Implements deque operations while having synchronization
+main.c: Manages producer and consumer threads, initialization, and freeing
+Makefile: Compiles code (for userspace)
+
+Build and Compile:
+cd userSpace
+make
+./main
+
+
+
+FOR TESTS:
+gcc user_tests.c deque.c -o user_tests -lpthread
+./user_tests

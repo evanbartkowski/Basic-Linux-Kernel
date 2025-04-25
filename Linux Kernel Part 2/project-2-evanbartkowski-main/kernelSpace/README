@@ -1,0 +1,23 @@
+Name: Evan Bartkowski
+Student ID: GB70971
+Email: e168@umbc.edu
+
+Project: Project 2 (producer and consumer problem with priority dequeues)
+
+Project Overview: This project uses three different priority dequeues (double ended queues) to handle programs. The priority levels are Low, medium, and High. Programs will be moved to a queue simulating a priority based scheduling system where producers will add tasks to the deques (using synchronization) and consumers will remove them based on highest available priority.
+
+Project Structure: 
+
+#KERNAL SPACE#
+kdeque.h - Header file for deque structure
+kdeque.c - Implementation file for system calls
+Makefile - Compiles code (for Kernalspace)
+
+Build and Compile:
+cd kernel_space
+make
+gcc kernel_tests.c -o kernel_tests
+./kernel_tests
+
+Kernalspace Driver- Interacts with kernel module using system calls. does priority testing and synchronization with multiple threads.
+- Run compiled main.c program directly to execute while compile kernal_tests.c with root privileges after loading kernel module.

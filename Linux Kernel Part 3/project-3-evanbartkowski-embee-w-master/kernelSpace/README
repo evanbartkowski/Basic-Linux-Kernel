@@ -1,0 +1,129 @@
+CMSC421 Project 4 (Part 3)
+[README]
+
+=====================
+Project Overview
+=====================
+ In this project, we extend the functionality of the MEMEfs filesystem (part 1)
+ by integrating it with a Linux kernel module. The objective to have a kernel
+ module that, once inserted into the kernel, can read the contents of a file
+ hosted on the user-space FUSE-mounted MEMEfs filesystem, and print that content
+ using dmesg.
+
+
+ Contact:
+  - Evan Bartkowski e168@umbc.edu
+  - Benjamin Whitehurst b236@umbc.edu
+
+=====================
+Key Features:
+=====================
+ - Read-only MEMEfs mounted using FUSE 
+ - A kernel module that loads into the kernel via insmod, opens and reads a file
+   located on the FUSE-mounted MEMEfs, and puts read data to the kernel message
+   buffer (dmesg).
+ - Interacts with userspace via a device node at /dev/memefs (represented as a
+   character device file).
+
+=====================
+Installation and Setup
+=====================
+ Prerequisites:
+
+ 1. Linux environment with kernel headers installed.
+    (We selected 5.10.0-33-amd64 from the boot menu.)
+
+    You can check with:
+      ls -l /lib/modules/ | grep $(uname -r)
+    If not present, make sure you are not in a custom kernel, or install with:
+      sudo apt-get install linux-headers-`uname -r`
+
+ 2. FUSE and libfuse development libraries (libfuse-dev).
+
+ 3. A working implementation of the MEMEfs read-only filesystem from Project 3
+    (Part 1). This should be located in the userSpace/ directory.
+
+ Instructions:
+
+ First compile the userSpace code and make the filesystem image:
+  cd userSpace
+  make
+  make image	
+
+ Then mount the FUSE MEMEfs:
+  ./memefs --volume_label="LABEL" -o allow_other /tmp/memefs filesystem.img
+  touch /tmp/memefs/testfile
+  echo "whatever you want to say" > /tmp/memefs/testfile
+
+ Now compile the kernelSpace code:
+  cd ../kernelSpace
+  make
+
+ Finally insert the kernel module:
+  sudo insmod filesystem.ko filepath="/tmp/memefs/testfile"
+  sudo chmod 666 /dev/memefs
+ Check that it worked:
+  sudo dmesg | tail	
+  grep memefs /proc/devices
+
+ Now you can interact with /dev/memefs, e.g. "cat /dev/memefs".
+ The content should show up in dmesg, view with "sudo dmesg | tail".
+
+ Cleanup:
+ Remove kernel module (and check for success):
+  sudo rmmod filesystem
+  sudo dmesg | tail 
+ 
+ "make clean" can be used in both kernelSpace and userSpace
+
+
+=====================
+Troubleshooting
+=====================
+ Note:
+  Any files in /tmp are cleared upon reboot, thus you will have to remake the
+  directory and remount the MEMEfs in that case.
+
+ Module Insert Fails:
+  Ensure you have appropriate permissions. Also, verify that the code is
+  compatible with kernel version.
+
+ File Not Readable:
+  Check that testfile.txt exists and that MEMEfs is mounted. If the file does
+  not exist
+
+ Kernel Warnings:
+  Review warnings from the kernel build logs. 
+
+=====================
+Testing
+=====================
+ We have a bash script "all_tests.sh" to run some automatic tests.
+ It must be run as root from the kernelSpace/tests directory.
+
+ Usage:
+  cd kernelSpace/tests
+  sudo bash all_tests.sh
+
+=====================
+References
+=====================
+ "4.1 Character Device Drivers" (Linux Kernel Module Programming Guide)
+ -> Some information about setting up character device drivers.
+  https://tldp.org/LDP/lkmpg/2.6/html/lkmpg.html
+
+ "Linux Device Driver Tutorial Part 4 – Character Device Driver"
+ -> Info about device major number and minor number
+  https://embetronicx.com/tutorials/linux/device-drivers/character-device-driver-major-number-and-minor-number/
+
+ "Using Devfs"
+ -> Heavily outdated (devefs is deprecated), but some of the concepts were useful
+  https://www.linux.it/~rubini/docs/devfs/
+
+ Linux Kernel API Documentation:
+  https://www.kernel.org/doc/Documentation/
+
+ FUSE Documentation:
+  https://github.com/libfuse/libfuse
+
+ As well as any info from the project document and the sources linked within it.

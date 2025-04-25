@@ -1,0 +1,61 @@
+Name: Evan Bartkowski
+Student ID: GB70971
+Email: e168@umbc.edu
+
+Project: Project 2 (producer and consumer problem with priority dequeues)
+
+Project Overview: This project uses three different priority dequeues 
+(double ended queues) to handle programs. The priority levels are Low, medium, 
+and High. Programs will be moved to a queue simulating a priority based 
+scheduling system where producers will add tasks to the deques 
+(using synchronization) and consumers will remove them based on highest 
+available priority.
+
+Project Structure: 
+#USERSPACE#
+deque.h: Header that creates definitions and function prototypes
+deque.c: Implements deque operations while having synchronization
+main.c: Manages producer and consumer threads, initialization, and freeing
+Makefile: Compiles code (for userspace)
+#KERNAL SPACE#
+kdeque.h - Header file for deque structure
+kdeque.c - Implementation file for system calls
+Makefile - Compiles code (for Kernalspace)
+
+Build and Compile:
+
+
+cd user_space
+make
+./main
+gcc user_tests.c deque.c -o user_tests -lpthread
+./user_tests
+
+
+
+cd kernel_space
+make
+gcc kernel_tests.c -o kernel_tests
+./kernel_tests
+
+Driver Overview:
+Userspace Driver (Main.c) - initializes dequeues, sets up synchronization 
+using semaphores and mutex, simulates producers adding tasks, and consumers 
+removing tasks.
+Kernalspace Driver- Interacts with kernel module using system calls. does 
+priority testing and synchronization with multiple threads.
+- Run compiled main.c program directly to execute while compile 
+kernal_tests.c with root privileges after loading kernel module.
+
+Issues / Errors:
+Keep getting errors trying to use 'make' on kernel code. It from syscalls not being defined.
+Must have something to do with tracing but i cannot figure out how to fix it,
+even after adding to syscall table, adding to headers, disabling tracing, 
+checking for duplicates, and recompiling.
+
+Citations:
+https://medium.com/dvt-engineering/how-to-write-your-first-linux-kernel-module-cf284408beeb
+https://www.youtube.com/watch?v=ukM_zzrIeXs&t=640s
+https://www.youtube.com/watch?v=fLS99zJDHOc
+https://www.youtube.com/watch?v=RN1wzY_tnYU
+
